@@ -19,7 +19,8 @@ namespace _7X7
         string tempcolor = null;
         List<Button> temp_list = new List<Button>();
         List<Button> remove_list = new List<Button>();
-        bool erase=false;
+        bool erase = false;
+        int score = 0;
 
         public Form1()
         {
@@ -40,7 +41,7 @@ namespace _7X7
                     cell[i, j].FlatStyle = FlatStyle.Flat;
                     cell[i, j].FlatAppearance.BorderSize = 2;
                     cell[i, j].FlatAppearance.BorderColor = Color.DarkGray;
-                    cell[i, j].Top = 125 + j * 51;
+                    cell[i, j].Top = 75 + j * 51;
                     cell[i, j].Left = 25 + i * 51;
                     this.Controls.Add(cell[i, j]);
                     this.cell[i, j].Click += new System.EventHandler(this.cell_Click);
@@ -88,6 +89,12 @@ namespace _7X7
         {
             while (counter > 0)
             {
+                if (GameOver())
+                {
+                    MessageBox.Show("Your Score: " + score.ToString());
+                    break;
+                }
+
                 ColorRandomCell();
                 counter--;
             }
@@ -173,10 +180,52 @@ namespace _7X7
             {
                 foreach (Button b in remove_list)
                     b.BackColor = Color.White;
+                UpdateScore();
                 erase = true;
                 System.Media.SystemSounds.Exclamation.Play();
                 remove_list.Clear();
             }
+        }
+
+        private bool GameOver()
+        {
+            for (int i = 0; i < 7; i++)
+                for (int j = 0; j < 7; j++)
+                    if (cell[i, j].BackColor == Color.White)
+                        return false;
+            return true;
+        }
+
+        private void UpdateScore()
+        {
+            score += remove_list.Distinct().Count() * 10;
+            labelScore.Text = score.ToString();
+        }
+
+        private void newGameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            score = 0;
+            labelScore.Text = score.ToString();
+            tempcolor = null;
+            erase = false;
+            temp_list.Clear();
+            remove_list.Clear();
+            for (int i = 0; i < 7; i++)
+                for (int j = 0; j < 7; j++)
+                {
+                    cell[i, j].BackColor = Color.White;
+                }
+            AddCell(3);
+        }
+
+        private void aboutToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("arthur56betw1n, 2018");
+        }
+
+        private void rulesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Make horizontal, vertical or diagonal rows of the same color by dragging pieces across the board and get points.");
         }
     }
 }
